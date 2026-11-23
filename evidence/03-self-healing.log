@@ -1,0 +1,33 @@
+Nicholas Place | nmplace@unc.edu | DATA 789 HW4
+2026-11-22T20:24:49-05:00
++ kubectl --context data789-hw4 get deployment trustbank-fraud
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+trustbank-fraud   3/3     3            3           4m3s
++ kubectl --context data789-hw4 get pods -l app=trustbank-fraud -o wide
+NAME                               READY   STATUS    RESTARTS   AGE    IP           NODE          NOMINATED NODE   READINESS GATES
+trustbank-fraud-74ddd9666b-4bt4n   1/1     Running   0          4m3s   10.244.0.7   data789-hw4   <none>           <none>
+trustbank-fraud-74ddd9666b-ttx7d   1/1     Running   0          4m3s   10.244.0.2   data789-hw4   <none>           <none>
+trustbank-fraud-74ddd9666b-vp5bh   1/1     Running   0          4m3s   10.244.0.6   data789-hw4   <none>           <none>
+++ kubectl --context data789-hw4 get pods -l app=trustbank-fraud -o 'jsonpath={.items[0].metadata.name}'
++ VICTIM=trustbank-fraud-74ddd9666b-4bt4n
++ kubectl --context data789-hw4 delete pod trustbank-fraud-74ddd9666b-4bt4n --wait=false
+pod "trustbank-fraud-74ddd9666b-4bt4n" deleted from default namespace
++ kubectl --context data789-hw4 get pods -l app=trustbank-fraud
+NAME                               READY   STATUS        RESTARTS   AGE
+trustbank-fraud-74ddd9666b-4bt4n   1/1     Terminating   0          4m3s
+trustbank-fraud-74ddd9666b-bq8pq   0/1     Pending       0          0s
+trustbank-fraud-74ddd9666b-ttx7d   1/1     Running       0          4m3s
+trustbank-fraud-74ddd9666b-vp5bh   1/1     Running       0          4m3s
++ kubectl --context data789-hw4 wait --for=delete pod/trustbank-fraud-74ddd9666b-4bt4n --timeout=90s
+pod/trustbank-fraud-74ddd9666b-4bt4n condition met
++ kubectl --context data789-hw4 rollout status deployment/trustbank-fraud --timeout=180s
+Waiting for deployment "trustbank-fraud" rollout to finish: 2 of 3 updated replicas are available...
+deployment "trustbank-fraud" successfully rolled out
++ kubectl --context data789-hw4 get pods -l app=trustbank-fraud -o wide
+NAME                               READY   STATUS    RESTARTS   AGE     IP           NODE          NOMINATED NODE   READINESS GATES
+trustbank-fraud-74ddd9666b-bq8pq   1/1     Running   0          11s     10.244.0.8   data789-hw4   <none>           <none>
+trustbank-fraud-74ddd9666b-ttx7d   1/1     Running   0          4m14s   10.244.0.2   data789-hw4   <none>           <none>
+trustbank-fraud-74ddd9666b-vp5bh   1/1     Running   0          4m14s   10.244.0.6   data789-hw4   <none>           <none>
++ kubectl --context data789-hw4 get deployment trustbank-fraud
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+trustbank-fraud   3/3     3            3           4m14s

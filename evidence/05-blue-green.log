@@ -1,0 +1,51 @@
+2026-11-22T20:26:27-05:00
+deployment.apps/trustbank-fraud-blue created
+deployment.apps/trustbank-fraud-green created
+service/trustbank-fraud-bg created
+Waiting for deployment "trustbank-fraud-blue" rollout to finish: 0 of 3 updated replicas are available...
+Waiting for deployment "trustbank-fraud-blue" rollout to finish: 1 of 3 updated replicas are available...
+Waiting for deployment "trustbank-fraud-blue" rollout to finish: 2 of 3 updated replicas are available...
+deployment "trustbank-fraud-blue" successfully rolled out
+deployment "trustbank-fraud-green" successfully rolled out
+service/trustbank-fraud-bg patched (no change)
+✅ trustbank-fraud-bg now routing to → blue
+pod/bluegreen-load-53020 created
+pod/bluegreen-load-53020 condition met
+=== Service routing to blue ===
+service/trustbank-fraud-bg patched (no change)
+✅ trustbank-fraud-bg now routing to → blue
+NAME                 COLOR
+trustbank-fraud-bg   blue
+NAME                                    READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+trustbank-fraud-blue-699858bfd9-5pn7k   1/1     Running   0          14s   10.244.0.15   data789-hw4   <none>           <none>
+trustbank-fraud-blue-699858bfd9-f76mc   1/1     Running   0          14s   10.244.0.16   data789-hw4   <none>           <none>
+trustbank-fraud-blue-699858bfd9-t59bq   1/1     Running   0          14s   10.244.0.13   data789-hw4   <none>           <none>
+Ready endpoint addresses: 10.244.0.13 10.244.0.15 10.244.0.16 
+{"transaction_id":"txn-abc-001","fraud_probability":1.0,"is_fraud":1,"model_version":"sklearn-logreg-v1","latency_ms":0.5046}
+HTTP 200
+=== Service routing to green ===
+service/trustbank-fraud-bg patched
+✅ trustbank-fraud-bg now routing to → green
+NAME                 COLOR
+trustbank-fraud-bg   green
+NAME                                     READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+trustbank-fraud-green-7d9fbd7497-75dxj   1/1     Running   0          19s   10.244.0.14   data789-hw4   <none>           <none>
+trustbank-fraud-green-7d9fbd7497-gv62f   1/1     Running   0          19s   10.244.0.17   data789-hw4   <none>           <none>
+trustbank-fraud-green-7d9fbd7497-lpbvk   1/1     Running   0          19s   10.244.0.18   data789-hw4   <none>           <none>
+Ready endpoint addresses: 10.244.0.14 10.244.0.17 10.244.0.18 
+{"transaction_id":"txn-abc-001","fraud_probability":1.0,"is_fraud":1,"model_version":"sklearn-logreg-v1","latency_ms":1.6645}
+HTTP 200
+=== Service routing to blue ===
+service/trustbank-fraud-bg patched
+✅ trustbank-fraud-bg now routing to → blue
+NAME                 COLOR
+trustbank-fraud-bg   blue
+NAME                                    READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+trustbank-fraud-blue-699858bfd9-5pn7k   1/1     Running   0          25s   10.244.0.15   data789-hw4   <none>           <none>
+trustbank-fraud-blue-699858bfd9-f76mc   1/1     Running   0          25s   10.244.0.16   data789-hw4   <none>           <none>
+trustbank-fraud-blue-699858bfd9-t59bq   1/1     Running   0          25s   10.244.0.13   data789-hw4   <none>           <none>
+Ready endpoint addresses: 10.244.0.13 10.244.0.15 10.244.0.16 
+{"transaction_id":"txn-abc-001","fraud_probability":1.0,"is_fraud":1,"model_version":"sklearn-logreg-v1","latency_ms":0.567}
+HTTP 200
+pod/bluegreen-load-53020 condition met
+Blue -> green -> blue: requests: 77  ok: 77  dropped: 0

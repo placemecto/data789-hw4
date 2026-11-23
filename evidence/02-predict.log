@@ -1,0 +1,12 @@
+Nicholas Place | nmplace@unc.edu | DATA 789 HW4
+2026-11-22T20:23:15-05:00
++ kubectl --context data789-hw4 get svc trustbank-fraud
+NAME              TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+trustbank-fraud   LoadBalancer   10.100.95.192   <pending>     80:31842/TCP   2m29s
++ curl --fail-with-body -sS http://127.0.0.1:18080/health
+{"status":"ok"}+ bash scripts/smoke_test.sh http://127.0.0.1:18080
+▶ POST http://127.0.0.1:18080/predict
+  HTTP 200
+  response:
+{"transaction_id":"txn-abc-001","fraud_probability":1.0,"is_fraud":1,"model_version":"sklearn-logreg-v1","latency_ms":1.6004}
+✅ /predict returned 200

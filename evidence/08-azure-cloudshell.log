@@ -1,0 +1,60 @@
+Nicholas Place | nmplace@unc.edu | DATA 789 HW4
+2026-11-23T01:30:01+00:00
+Azure for Students
+263e9814e2db175a2c30976bcf16da2ddd76dd713137c55cb82fd4baf22e30a0  deploy_azure.sh
+c9ee31447032ab6a22a97c823f93068598e03242552f566f078303c4f56fa77b  config.env
+▶ subscription : Azure for Students
+   ⚠️  region 'eastus2' is not permitted by your subscription policy.
+      auto-selecting 'westus3'  (allowed: westus3 centralus westus francecentral mexicocentral )
+      to pick a different allowed region:  export LOCATION=<region>  and re-run.
+▶ region       : westus3
+▶ source image : ghcr.io/rfsalas/trustbank-fraud:v1
+
+▶ registering resource providers (idempotent)…
+▶ creating resource group…
+▶ checking registry name availability…
+▶ creating registry (Basic, admin user disabled — AAD auth only)…
+▶ importing the provided public image into your registry (no build, no keys)…
+▶ creating Container Apps environment…
+WARNING: No Log Analytics workspace provided.
+WARNING: Generating a Log Analytics workspace with name "workspace-rgdata789hw4nmplacerqPH"
+WARNING: 
+Container Apps environment created. To deploy a container app, use: az containerapp create --help
+
+▶ creating a user-assigned managed identity for ACR pulls…
+WARNING: Resource provider 'Microsoft.ManagedIdentity' used by this operation is not registered. We are registering for you.
+WARNING: Registration succeeded.
+▶ granting the identity AcrPull and waiting for RBAC to propagate…
+▶ deploying the container app (user-assigned identity + AcrPull, scale-to-zero)…
+WARNING: User identity /subscriptions/c83e7d64-0095-40cb-90b8-32232f627ef8/resourcegroups/rg-data789-hw4-nmplace/providers/microsoft.managedidentity/userassignedidentities/id-trustbank-fraud is already assigned to containerapp
+/ Running ..| Running ..\ Running ..- Running ../ Running ..| Running ..\ Running ..- Running ../ Running ..| Running ..\ Running ..- Running ../ Running ..[KWARNING: 
+Container app created. Access your app at https://trustbank-fraud.happyplant-cf18bd73.westus3.azurecontainerapps.io/
+
+
+✅ deployed. Your fraud API is live in the cloud — try it:
+      curl https://trustbank-fraud.happyplant-cf18bd73.westus3.azurecontainerapps.io/health       # → {"status":"ok"}
+      curl -s -X POST https://trustbank-fraud.happyplant-cf18bd73.westus3.azurecontainerapps.io/predict \
+        -H 'Content-Type: application/json' \
+        -d '{"transaction_id":"t1","customer_id":"CUST0001","amount":1500,"merchant_category":"online_retail","is_online":true,"timestamp":"2026-01-01T00:50:00Z"}'
+      # → a fraud decision  ← screenshot this
+
+   ⚠️  capture your screenshot, then TEAR DOWN SAME DAY:
+      ./teardown_azure.sh
+
+=== PUBLIC ENDPOINT: https://trustbank-fraud.happyplant-cf18bd73.westus3.azurecontainerapps.io ===
+{"status":"ok"}
+▶ POST https://trustbank-fraud.happyplant-cf18bd73.westus3.azurecontainerapps.io/predict
+  HTTP 200
+  response:
+{"transaction_id":"txn-abc-001","fraud_probability":1.0,"is_fraud":1,"model_version":"sklearn-logreg-v1","latency_ms":3295.4655}
+✅ /predict returned 200
+=== EVIDENCE CAPTURE WINDOW: teardown in 60 seconds ===
+=== SAME-DAY TEARDOWN ===
+2026-11-23T01:39:12+00:00
+▶ deleting resource group: rg-data789-hw4-nmplace
+  (removes the app, environment, registry, and workspace)
+
+Deletion runs in the background and can take up to ~30 minutes. Re-run `az group exists -n <rg>` until it prints false — screenshot that (it is graded) — and do not redeploy until it does.
+      az group exists -n rg-data789-hw4-nmplace      # should print: false
+$ az group exists -n rg-data789-hw4-nmplace
+false

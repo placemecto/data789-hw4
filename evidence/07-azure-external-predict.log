@@ -1,0 +1,6 @@
+2026-11-22T20:38:18-05:00
+▶ POST https://trustbank-fraud.happyplant-cf18bd73.westus3.azurecontainerapps.io/predict
+  HTTP 200
+  response:
+{"transaction_id":"txn-abc-001","fraud_probability":1.0,"is_fraud":1,"model_version":"sklearn-logreg-v1","latency_ms":3565.5097}
+✅ /predict returned 200

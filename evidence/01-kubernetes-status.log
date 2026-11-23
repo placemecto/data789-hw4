@@ -1,0 +1,29 @@
+Nicholas Place | nmplace@unc.edu | DATA 789 HW4
+2026-11-22T20:22:39-05:00
++ kubectl --context data789-hw4 get deployments
+NAME              READY   UP-TO-DATE   AVAILABLE   AGE
+redis             1/1     1            1           3m4s
+trustbank-fraud   3/3     3            3           3m4s
++ kubectl --context data789-hw4 get pods,svc,hpa
+NAME                                   READY   STATUS    RESTARTS   AGE
+pod/redis-ffb86644f-lz2kj              1/1     Running   0          3m4s
+pod/trustbank-fraud-74ddd9666b-4bt4n   1/1     Running   0          3m4s
+pod/trustbank-fraud-74ddd9666b-ttx7d   1/1     Running   0          3m4s
+pod/trustbank-fraud-74ddd9666b-vp5bh   1/1     Running   0          3m4s
+
+NAME                      TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+service/kubernetes        ClusterIP      10.96.0.1       <none>        443/TCP        3m12s
+service/redis             ClusterIP      10.99.0.243     <none>        6379/TCP       3m4s
+service/trustbank-fraud   LoadBalancer   10.100.95.192   <pending>     80:31842/TCP   3m4s
+
+NAME                                                  REFERENCE                    TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/trustbank-fraud   Deployment/trustbank-fraud   cpu: 1%/40%   3         8         3          3m4s
++ kubectl --context data789-hw4 top pods
+NAME                               CPU(cores)   MEMORY(bytes)   
+redis-ffb86644f-lz2kj              3m           8Mi             
+trustbank-fraud-74ddd9666b-4bt4n   1m           129Mi           
+trustbank-fraud-74ddd9666b-ttx7d   1m           130Mi           
+trustbank-fraud-74ddd9666b-vp5bh   1m           129Mi           
++ kubectl --context data789-hw4 get deployment trustbank-fraud -o 'jsonpath={.metadata.labels.owner}{" / "}{.spec.template.metadata.labels.owner}{"\n"}{.spec.template.spec.containers[0].resources}{"\n"}'
+nmplace / nmplace
+{"limits":{"cpu":"250m","memory":"192Mi"},"requests":{"cpu":"100m","memory":"128Mi"}}

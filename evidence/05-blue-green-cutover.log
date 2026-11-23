@@ -1,0 +1,25 @@
+Nicholas Place | nmplace@unc.edu | DATA 789 HW4
+2026-11-22T20:27:07-05:00
++ bash scripts/bluegreen_switch.sh green
+service/trustbank-fraud-bg patched
+✅ trustbank-fraud-bg now routing to → green
++ kubectl get svc trustbank-fraud-bg -o custom-columns=NAME:.metadata.name,COLOR:.spec.selector.color
+NAME                 COLOR
+trustbank-fraud-bg   green
++ kubectl get deployment trustbank-fraud-blue trustbank-fraud-green
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+trustbank-fraud-blue    3/3     3            3           40s
+trustbank-fraud-green   3/3     3            3           40s
++ kubectl get pods -l app=trustbank-fraud-bg,color=green -o wide
+NAME                                     READY   STATUS    RESTARTS   AGE   IP            NODE          NOMINATED NODE   READINESS GATES
+trustbank-fraud-green-7d9fbd7497-75dxj   1/1     Running   0          40s   10.244.0.14   data789-hw4   <none>           <none>
+trustbank-fraud-green-7d9fbd7497-gv62f   1/1     Running   0          40s   10.244.0.17   data789-hw4   <none>           <none>
+trustbank-fraud-green-7d9fbd7497-lpbvk   1/1     Running   0          40s   10.244.0.18   data789-hw4   <none>           <none>
++ kubectl get endpointslices -l kubernetes.io/service-name=trustbank-fraud-bg
+NAME                       ADDRESSTYPE   PORTS   ENDPOINTS                             AGE
+trustbank-fraud-bg-l6pxg   IPv4          8000    10.244.0.14,10.244.0.18,10.244.0.17   40s
+++ cat scripts/sample_transaction.json
++ kubectl run bg-verify-green --rm -i --restart=Never --image=curlimages/curl:8.12.1 -- curl --fail-with-body -sS -w '\nHTTP %{http_code}\n' --max-time 10 -X POST http://trustbank-fraud-bg/predict -H 'Content-Type: application/json' -d $'{\n  "transaction_id": "txn-abc-001",\n  "customer_id": "CUST0001",\n  "amount": 1500.0,\n  "merchant_category": "online_retail",\n  "is_online": true,\n  "timestamp": "2026-01-01T00:50:00Z"\n}'
+{"transaction_id":"txn-abc-001","fraud_probability":1.0,"is_fraud":1,"model_version":"sklearn-logreg-v1","latency_ms":0.4165}
+HTTP 200
+pod "bg-verify-green" deleted from default namespace
